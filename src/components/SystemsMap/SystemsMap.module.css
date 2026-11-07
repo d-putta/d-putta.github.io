@@ -1,0 +1,217 @@
+/* The AI systems map band under the hero. Values mirror the audited prototype. */
+.nucleus {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 25%, transparent);
+}
+
+.stage {
+  position: relative;
+  height: clamp(380px, 56vh, 560px);
+  max-width: var(--maxw);
+  margin: 0 auto;
+  transition: height 0.7s var(--ease-out);
+  touch-action: pan-y;
+}
+.big .stage {
+  height: min(calc(100vh - 66px), 1000px);
+  height: min(calc(100svh - 66px - env(safe-area-inset-top, 0px)), 1000px);
+  max-width: none;
+}
+
+/* Decorative dotted field with a soft radial mask. */
+.hex {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--line-strong) 1px, transparent 1.6px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse at center, var(--text) 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, var(--text) 20%, transparent 72%);
+  opacity: 0.5;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.canvas[data-drag='true'] {
+  cursor: grabbing;
+}
+
+/* Scanning band that sweeps top to bottom. */
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -140px;
+  height: 140px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 10%, transparent) 50%,
+    transparent
+  );
+  animation: scanmove 7s linear infinite;
+  pointer-events: none;
+}
+@keyframes scanmove {
+  from {
+    top: -140px;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbits {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(86%, 420px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+.ringx {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--accent) 35%, transparent);
+  animation: orbit 40s linear infinite;
+}
+.ringy {
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-top-color: var(--accent);
+  animation: orbit 9s linear infinite reverse;
+}
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Callout describing the focused node; positioned by script, state via data attributes. */
+.callout {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  transform: translate(16px, -50%);
+  min-width: 190px;
+  max-width: 250px;
+  padding: 10px 12px 11px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, var(--glass-hi) 0, transparent 40%),
+    var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    inset 0 1px 0 var(--glass-hi),
+    0 18px 40px -22px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.callout[data-on='true'] {
+  opacity: 1;
+}
+.callout::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  width: 16px;
+  height: 1px;
+  background: var(--accent);
+}
+.callout[data-flip='true'] {
+  transform: translate(calc(-100% - 16px), -50%);
+}
+.callout[data-flip='true']::before {
+  left: auto;
+  right: -16px;
+}
+
+.cGroup {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.cName {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 2px;
+  color: var(--text);
+}
+.cDesc {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+.expand {
+  position: absolute;
+  bottom: 14px;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  z-index: 4;
+  pointer-events: auto;
+}
+
+/* Group names also live in the DOM for assistive tech; the canvas only paints them. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .callout,
+  .callout[data-flip='true'] {
+    left: max(16px, env(safe-area-inset-left, 0px));
+    right: max(16px, env(safe-area-inset-right, 0px));
+    top: auto;
+    bottom: 64px;
+    transform: none;
+    min-width: 0;
+    max-width: none;
+  }
+  .callout::before {
+    display: none;
+  }
+  .cDesc {
+    font-size: 12px;
+  }
+}
+
+/* Older browsers without color-mix(): keep the callout text on an opaque surface. */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .callout {
+    background: var(--surface);
+  }
+}

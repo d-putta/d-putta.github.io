@@ -1,0 +1,86 @@
+/*
+ * Design tokens. Dark-first; the light palette applies when the OS prefers light
+ * and no explicit data-theme="dark" is set, or when data-theme="light" is set.
+ * Every color used anywhere in the site comes from these tokens.
+ */
+:root {
+  color-scheme: dark;
+
+  --bg: #070a10;
+  --bg-2: #0b1019;
+  --surface: #0f1620;
+  --surface-2: #151e2b;
+  --line: rgba(140, 170, 210, 0.14);
+  --line-strong: rgba(140, 170, 210, 0.3);
+  --text: #e8eef7;
+  --muted: #8e9db3;
+  --faint: #7483a0;
+  --accent: #4cc9f0;
+  --accent-2: #7cf5d6;
+  --accent-ink: #06202b;
+  --accent-soft: rgba(76, 201, 240, 0.12);
+  --signal: #ffb454;
+  --ok: #5be3a6;
+  --glow: rgba(76, 201, 240, 0.4);
+  --glass: rgba(16, 24, 36, 0.55);
+  --glass-hi: rgba(255, 255, 255, 0.09);
+  --glass-line: rgba(255, 255, 255, 0.1);
+
+  --font-display: 'Syne', 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+  --font-hero: 'Michroma', 'Syne', 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  --maxw: 1200px;
+  --radius: 14px;
+  --nav-h: 64px;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --bg: #f2f6fb;
+    --bg-2: #e9eff7;
+    --surface: #ffffff;
+    --surface-2: #e8eef6;
+    --line: rgba(20, 50, 90, 0.12);
+    --line-strong: rgba(20, 50, 90, 0.26);
+    --text: #0e1726;
+    --muted: #4f6079;
+    --faint: #5b6b84;
+    --accent: #0b7a99;
+    --accent-2: #09806b;
+    --accent-ink: #ffffff;
+    --accent-soft: rgba(11, 122, 153, 0.1);
+    --signal: #b45309;
+    --ok: #15803d;
+    --glow: rgba(11, 122, 153, 0.25);
+    --glass: rgba(255, 255, 255, 0.55);
+    --glass-hi: rgba(255, 255, 255, 0.9);
+    --glass-line: rgba(20, 50, 90, 0.14);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f2f6fb;
+  --bg-2: #e9eff7;
+  --surface: #ffffff;
+  --surface-2: #e8eef6;
+  --line: rgba(20, 50, 90, 0.12);
+  --line-strong: rgba(20, 50, 90, 0.26);
+  --text: #0e1726;
+  --muted: #4f6079;
+  --faint: #5b6b84;
+  --accent: #0b7a99;
+  --accent-2: #09806b;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(11, 122, 153, 0.1);
+  --signal: #b45309;
+  --ok: #15803d;
+  --glow: rgba(11, 122, 153, 0.25);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-hi: rgba(255, 255, 255, 0.9);
+  --glass-line: rgba(20, 50, 90, 0.14);
+}

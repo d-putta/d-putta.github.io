@@ -1,0 +1,417 @@
+/*
+ * Hero header: drifting orbs, a pointer-lit grid, the headline column and the
+ * portrait column with its greeting bubble. Hero.tsx writes the pointer
+ * position to --mx/--my on the header; the grid mask follows it.
+ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Background layers */
+.bgrid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(
+    600px 400px at var(--mx, 70%) var(--my, 40%),
+    #000 0%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    600px 400px at var(--mx, 70%) var(--my, 40%),
+    #000 0%,
+    transparent 70%
+  );
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  z-index: -3;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.orbA {
+  top: -180px;
+  right: -120px;
+  width: 520px;
+  height: 520px;
+  background: var(--accent);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orbB {
+  bottom: -160px;
+  left: -80px;
+  width: 380px;
+  height: 380px;
+  background: var(--accent-2);
+  opacity: 0.2;
+  animation: drift 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes drift {
+  to {
+    transform: translate(-60px, 50px) scale(1.1);
+  }
+}
+
+/* Layout: two columns on wide screens, one below 980px */
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  gap: 48px;
+  align-items: center;
+  padding-block: 64px 72px;
+}
+
+/* Left column */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.title {
+  font-family: var(--font-hero);
+  font-size: clamp(26px, 3.7vw, 48px);
+  line-height: 1.16;
+  font-weight: 400;
+  max-width: 16ch;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+/* Visually hidden plain copy of the headline for assistive technology. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lede {
+  margin-top: 22px;
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  margin-top: 34px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+}
+.metaLabel {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Right column: portrait + greeting bubble */
+.core {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pcol {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.portrait {
+  position: relative;
+  width: min(100%, 440px);
+  aspect-ratio: 1;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+/* Breathing radial glow behind the figure */
+.portrait::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 78%;
+  height: 78%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 42%, transparent),
+    color-mix(in srgb, var(--accent-2) 18%, transparent) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  opacity: 0.9;
+  animation: breathe 6s ease-in-out infinite;
+}
+@keyframes breathe {
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 1;
+  }
+}
+/* Floor glow under the figure */
+.portrait::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -2%;
+  height: 18%;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 70%
+  );
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: saturate(0.94) contrast(1.04) drop-shadow(0 0 28px var(--glow))
+    drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 72%, transparent 100%);
+  transform: scale(1.02);
+  transition: transform 0.6s ease;
+}
+.portrait:hover .photo {
+  transform: scale(1.04);
+}
+
+.chip {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--bg) 75%, transparent);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.25s ease;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 20%, transparent);
+}
+.chipTop {
+  top: 10%;
+  left: 0;
+}
+.chipBottom {
+  right: 0;
+  bottom: 10%;
+  left: auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px 18px 13px;
+  border-radius: 16px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.chipName {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.chipRole {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.bubble {
+  composes: glass from global;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+/* Arrow pointing up at the portrait */
+.bubble::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  border-left: 1px solid var(--line-strong);
+  border-top: 1px solid var(--line-strong);
+  transform: translateX(-50%) rotate(45deg);
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.whoDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+/* Single-cell grid: the hidden sizer holds the full text's height while the
+   live copy types over it, so the bubble never collapses mid-replay. */
+.greet {
+  display: grid;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.greetSizer,
+.greetLive {
+  grid-area: 1 / 1;
+}
+.greetSizer {
+  visibility: hidden;
+}
+
+/* Older browsers without color-mix(): keep text-bearing surfaces opaque. */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .chip {
+    background: var(--surface);
+  }
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding-block: 52px 56px;
+  }
+  .core {
+    margin: 0 auto;
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Name chip moves below the photo, centered; .pcol reserves room for it. */
+  .chipBottom {
+    top: calc(100% - 8px);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    align-items: center;
+    text-align: center;
+    padding: 12px 16px;
+  }
+  .chipName {
+    font-size: 22px;
+  }
+  .pcol {
+    padding-bottom: 70px;
+  }
+  .chipTop {
+    top: 4%;
+  }
+}
+
+@media (max-width: 520px) {
+  .title {
+    font-size: clamp(22px, 6.6vw, 30px);
+    line-height: 1.2;
+  }
+  .grid {
+    padding-block: 40px 44px;
+  }
+  .eyebrow {
+    font-size: 11px;
+  }
+  .lede {
+    font-size: 16px;
+  }
+  .meta {
+    gap: 10px 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .pcol {
+    padding-bottom: 94px;
+  }
+  .chipRole {
+    font-size: 11px;
+  }
+}

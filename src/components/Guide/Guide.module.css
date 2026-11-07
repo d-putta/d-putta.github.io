@@ -1,0 +1,231 @@
+/* Meet Deepak: a floating guide fixed bottom-right. Hidden (and out of the tab
+   order, via `visibility`) while the hero is on screen or the systems map is
+   expanded; the portrait button opens a small glass dialog that types the greeting. */
+.guide {
+  position: fixed;
+  z-index: 60;
+  right: max(18px, env(safe-area-inset-right, 0px));
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  max-width: min(360px, calc(100vw - 32px));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0s linear 0.3s;
+}
+.guide.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* The dialog. `composes` supplies the shared glass finish and its no-color-mix
+   fallback (global.css, which main.tsx loads before any component module); the
+   prototype's darker tint, accent border and glow override it because
+   `.guide .card` (0,2,0) out-specifies the global `.glass` rule (0,1,0). */
+.card {
+  composes: glass from global;
+}
+.guide .card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background:
+    linear-gradient(180deg, var(--glass-hi) 0, transparent 35%),
+    color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow:
+    inset 0 1px 0 var(--glass-hi),
+    0 26px 70px -30px rgba(0, 0, 0, 0.7),
+    0 0 50px -24px var(--glow);
+  transform-origin: bottom right;
+}
+.guide .card[hidden] {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .guide .card {
+    animation: guidePopIn 0.35s var(--ease-out);
+  }
+}
+
+/* Header row: "Deepak · says hello" with a dot, and the close button. */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.close {
+  background: none;
+  border: 0;
+  color: var(--faint);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.close:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+/* The typed greeting; min-height keeps the card steady while characters appear. */
+.text {
+  font-size: 14.5px;
+  line-height: 1.55;
+  min-height: 3.1em;
+  color: var(--text);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Round portrait toggle with an accent ring; the ::after ring pulses outward. */
+.toggle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: radial-gradient(circle at 50% 40%, var(--surface-2), var(--bg));
+  cursor: pointer;
+  position: relative;
+  box-shadow:
+    0 12px 32px -14px var(--glow),
+    0 0 0 6px var(--accent-soft);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.toggle:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 36px -14px var(--glow),
+    0 0 0 8px var(--accent-soft);
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toggle::after {
+    animation: guideRing 2.8s ease-out infinite;
+  }
+}
+
+/* The portrait fills the button; the accent glow shows through transparent pixels. */
+.face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    transparent 70%
+  );
+}
+
+/* "Meet Deepak" pill to the left of the button; hidden while the card is open. */
+.label {
+  position: absolute;
+  right: 84px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--surface);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  border: 1px solid var(--line);
+  padding: 5px 9px;
+  border-radius: 6px;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.guide.open .label {
+  display: none;
+}
+
+/* Phones: the label sits above the button and the button shrinks. */
+@media (max-width: 520px) {
+  .label {
+    right: 0;
+    top: auto;
+    bottom: calc(100% + 8px);
+    transform: none;
+  }
+  .toggle {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+/* Module-local copies of the shared keyframes (CSS Modules localize animation names). */
+@keyframes guidePopIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes guideRing {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}

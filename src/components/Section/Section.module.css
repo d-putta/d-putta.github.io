@@ -1,0 +1,70 @@
+.section {
+  padding-block: 96px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.section:nth-of-type(even) {
+  background: color-mix(in srgb, var(--surface) 30%, transparent);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 44px;
+}
+.rail {
+  position: sticky;
+  top: calc(var(--nav-h) + 32px);
+  align-self: start;
+}
+.index {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 10px;
+  line-height: 1.15;
+}
+.word {
+  display: inline-block;
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+  transition-delay: calc(var(--i) * 70ms);
+}
+/* The hidden start state only applies when motion is allowed, so a reduced-motion
+   visitor never sees a heading that waits for the transition the override disables. */
+@media (prefers-reduced-motion: no-preference) {
+  .rail:global(.is-hidden) .word {
+    opacity: 0;
+    transform: translateY(14px) rotate(2deg);
+  }
+}
+.blurb {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 12px;
+  max-width: 26ch;
+}
+@media (max-width: 900px) {
+  .section {
+    padding-block: 64px;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .rail {
+    position: static;
+  }
+  .blurb {
+    max-width: 60ch;
+  }
+  .word {
+    transition-duration: 0.4s;
+    transition-delay: calc(var(--i) * 40ms);
+  }
+}

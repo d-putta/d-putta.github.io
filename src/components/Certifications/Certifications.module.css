@@ -1,0 +1,98 @@
+/* Grid of certification cards. App's <Section> supplies the rail heading. */
+.certs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* The Reveal wrapper is the grid item; grid display lets the card inside fill the row height,
+   as the prototype's single card/reveal element did. */
+.item {
+  display: grid;
+  min-width: 0;
+}
+
+.cert {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px;
+  align-items: start;
+}
+
+/* Highlighted (Professional-level) credential: signal-tinted border. Two classes so it
+   outranks the glass border composed into Card. */
+.cert.pro {
+  border-color: color-mix(in srgb, var(--signal) 40%, var(--line));
+}
+
+.badge {
+  position: relative;
+  overflow: hidden;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--signal) 45%, transparent);
+  background: color-mix(in srgb, var(--signal) 10%, transparent);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Sheen that sweeps across the badge when the card is hovered. Reduced motion is handled by
+   the global transition override in global.css. */
+.badge::after {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    120deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  transform: translateX(-120%) rotate(10deg);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.cert:hover .badge::after {
+  transform: translateX(120%) rotate(10deg);
+}
+
+.title {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Older browsers without color-mix(): keep the badge and border legible. */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .badge {
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+  }
+  .cert.pro {
+    border-color: var(--line-strong);
+  }
+}
+
+@media (max-width: 720px) {
+  .certs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

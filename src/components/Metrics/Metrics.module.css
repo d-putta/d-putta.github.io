@@ -1,0 +1,133 @@
+/* Key-figures strip: a frosted band of five cells between the ticker and the sections. */
+.strip {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+.strip::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-hi), transparent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Each cell is also a `.reveal`, so the global rule drives its opacity/transform
+   transition. The hover tint lives on ::after rather than on the cell itself so
+   Reveal's inline stagger `transition-delay` does not delay it. */
+.cell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 24px 20px 22px;
+  border-left: 1px solid var(--line);
+}
+.cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--glass-hi);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cell:hover::after {
+  opacity: 1;
+}
+.cell:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+/* Accent underline drawn left to right once the cell is in view; `transition-delay:
+   inherit` picks up Reveal's inline stagger so it starts with the fade. */
+.cell::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--ease-out);
+  transition-delay: inherit;
+}
+.cell.in::before {
+  transform: scaleX(1);
+}
+
+.val {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.unit {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--accent);
+  margin-left: 5px;
+}
+.lab {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cell:nth-child(n + 4) {
+    border-top: 1px solid var(--line);
+  }
+  .cell:nth-child(4) {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .val {
+    font-size: clamp(20px, 6.4vw, 28px);
+  }
+  .unit {
+    font-size: 11px;
+  }
+  .lab {
+    font-size: 12.5px;
+  }
+  .cell:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .cell:nth-child(odd) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .cell:nth-child(even) {
+    border-left: 1px solid var(--line);
+    padding-left: 20px;
+  }
+}
+
+/* Older browsers without color-mix(): keep the strip opaque so text stays readable. */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .strip {
+    background: var(--bg);
+  }
+}

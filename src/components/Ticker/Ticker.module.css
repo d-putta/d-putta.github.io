@@ -1,0 +1,92 @@
+/* Band */
+.ticker {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+}
+
+/* Edge fades so items appear to emerge from and dissolve into the band */
+.ticker::before,
+.ticker::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 1;
+  pointer-events: none;
+}
+.ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--bg-2), transparent);
+}
+.ticker::after {
+  right: 0;
+  background: linear-gradient(-90deg, var(--bg-2), transparent);
+}
+
+/* Track: the item list rendered twice, scrolled by half its width per cycle */
+.track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  animation: scrollx 40s linear infinite;
+}
+.ticker:hover .track {
+  animation-play-state: paused;
+}
+/* Applied from useReducedMotion() on the band; mirrors the media query below */
+.static .track {
+  animation: none;
+}
+/* At rest the first item would sit permanently under the left fade; the right
+   fade stays so the item clipped at that edge still dissolves. */
+.ticker.static::before {
+  display: none;
+}
+
+/* Items */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.item::after {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+@keyframes scrollx {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 600px) {
+  .ticker::before,
+  .ticker::after {
+    width: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+  .ticker::before {
+    display: none;
+  }
+}

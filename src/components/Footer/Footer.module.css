@@ -1,0 +1,25 @@
+/* Footer band */
+.footer {
+  border-top: 1px solid var(--line);
+  padding-block: 22px;
+}
+
+/* Inner row: copyright left, role line right; wraps onto two lines when narrow */
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+}
+
+/* Below 1348px the floating guide sits over the footer corner; reserve room so
+   it never covers the text (104px = guide height + its 18px bottom offset). */
+@media (max-width: 1348px) {
+  .inner {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+  }
+}
